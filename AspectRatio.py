@@ -99,6 +99,21 @@ class Triangle(object):
         s = (a + b + c) / 2
         return a*b*c / (8*(s-a)*(s-b)*(s-c))
 
+def Usage():
+    print("""
+    Commands:
+    ---------
+      <TAB> : change vertex
+        <W> : move vertex up
+        <S> : move vertex down
+        <A> : move vertex left
+        <D> : move vertex right
+        <Q> : rotate triangle counter-clockwise
+        <E> : rotate triangle clockwise
+    <SPACE> : stop movement
+        <H> : display commands
+    """)
+
 def main():
     pygame.init()
     display = (800, 600)
@@ -133,6 +148,8 @@ def main():
     GREEN = (0, 1, 0)
     YELLOW = (1, 1, 0)
 
+    Usage()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -160,6 +177,9 @@ def main():
                         ctrl_v = 1
                     else:
                         ctrl_v += 1
+                if event.key == pygame.K_h:
+                    Usage()
+
         
         """ Update shapes """
         if ctrl_v == 1:
