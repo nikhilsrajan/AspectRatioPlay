@@ -5,7 +5,7 @@ Playing with the vertices to see how the triangle's aspect ratio changes.
 
 <img src="img/aspect-ratio.png"
      alt="aspect-ratio pygame window"
-     width = "400"
+     width = "500"
      style="display: block; margin: auto;" />
 
 I wanted something which could show me how triangles of different aspect ratio looks like. <br>
