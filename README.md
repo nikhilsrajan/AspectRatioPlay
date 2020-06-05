@@ -8,7 +8,21 @@ Playing with the vertices to see how the triangle's aspect ratio changes.
      width = "500"
      style="display: block; margin: auto;" />
 
-I wanted something which could show me how triangles of different aspect ratio looks like. <br>
+```
+    Commands:
+    ---------
+      <TAB> : change vertex
+        <W> : move vertex up
+        <S> : move vertex down
+        <A> : move vertex left
+        <D> : move vertex right
+        <Q> : rotate triangle counter-clockwise
+        <E> : rotate triangle clockwise
+    <SPACE> : stop movement
+        <H> : display commands
+```
+
+I wanted something which could show me what triangles of different aspect ratio looks like. <br>
 This code helps me play around with the vertices of a triangle and prints out the aspect ratio in the terminal.
 
 
