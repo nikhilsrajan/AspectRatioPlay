@@ -180,7 +180,6 @@ def main():
                 if event.key == pygame.K_h:
                     Usage()
 
-        
         """ Update shapes """
         if ctrl_v == 1:
             T.moveV1((t['x'], t['y'], t['z']))
