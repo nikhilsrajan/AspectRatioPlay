@@ -111,6 +111,7 @@ def Usage():
         <Q> : rotate triangle counter-clockwise
         <E> : rotate triangle clockwise
     <SPACE> : stop movement
+        <R> : reset triangle
         <H> : display commands
     """)
 
@@ -179,6 +180,10 @@ def main():
                         ctrl_v = 1
                     else:
                         ctrl_v += 1
+                if event.key == pygame.K_r:
+                    T = Triangle(v1 = (0, 0, 0),
+                                 v2 = (1, 0, 0),
+                                 v3 = (0, 1, 0))
                 if event.key == pygame.K_h:
                     Usage()
 
