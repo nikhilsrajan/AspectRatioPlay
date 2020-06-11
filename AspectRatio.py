@@ -4,37 +4,7 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from math import sin, cos, sqrt
-
-from copy import deepcopy
-
-def SumTuples(t1, t2):
-    l1 = list(t1)
-    l2 = list(t2)
-    Sum = []
-    for i, l1i in enumerate(l1):
-        Sum.append(l1i + l2[i])
-    return tuple(Sum)
-
-def DotPTuples(t1, t2):
-    l1 = list(t1)
-    l2 = list(t2)
-    dotP = 0
-    for i, l1i in enumerate(l1):
-        dotP += l1i * l2[i]
-    return dotP
-
-def CrossPTuples(t1, t2):
-    l1 = list(t1)
-    l2 = list(t2)
-    return (
-        l1[1]*l2[2] - l2[1]*l1[2],
-        -(l1[0]*l2[2] - l2[0]*l1[2]),
-        l1[0]*l2[1] - l2[0]*l1[1]
-    )
-
-def Norm2(t):
-    return sqrt(t[0]*t[0] + t[1]*t[1] + t[2]*t[2])
+from triangle import Triangle
 
 def DrawPoint(pos, color, size = 2):
     glEnable(GL_POINT_SMOOTH)
@@ -42,62 +12,18 @@ def DrawPoint(pos, color, size = 2):
     glBegin(GL_POINTS)
     glColor3fv(color)
     glVertex3fv(pos)
-    glEnd()    
+    glEnd()
 
-class Triangle(object):
-    """ Triangle class """
-    def __init__(self, v1, v2, v3):
-        self.v1 = deepcopy(v1)
-        self.v2 = deepcopy(v2)
-        self.v3 = deepcopy(v3)
-    
-    def draw(self, color):
-        glBegin(GL_LINES)
-        glColor3fv(color)
-        glVertex3fv(self.v1)
-        glVertex3fv(self.v2)
-        glVertex3fv(self.v2)
-        glVertex3fv(self.v3)
-        glVertex3fv(self.v3)
-        glVertex3fv(self.v1)
-        glEnd()
-    
-    def translate(self, t):
-        self.v1 = SumTuples(self.v1, t)
-        self.v2 = SumTuples(self.v2, t)
-        self.v3 = SumTuples(self.v3, t)
-        glTranslatef(-t[0], -t[1], -t[2])
-    
-    def rotate(self, angle):
-        centroid = SumTuples(SumTuples(self.v1, self.v2), self.v3)
-        centroid = (centroid[0]/3, centroid[1]/3, centroid[2]/3)
-
-        self.translate((-centroid[0], -centroid[1], -centroid[2]))
-        
-        R1 = (cos(angle), -sin(angle), 0)
-        R2 = (sin(angle), cos(angle), 0)
-        R3 = (0, 0, 1)
-        self.v1 = (DotPTuples(R1, self.v1), DotPTuples(R2, self.v1), DotPTuples(R3, self.v1))
-        self.v2 = (DotPTuples(R1, self.v2), DotPTuples(R2, self.v2), DotPTuples(R3, self.v1))
-        self.v3 = (DotPTuples(R1, self.v3), DotPTuples(R2, self.v3), DotPTuples(R3, self.v1))
-
-        self.translate(centroid)
-    
-    def moveV1(self, t):
-        self.v1 = SumTuples(self.v1, t)
-
-    def moveV2(self, t):
-        self.v2 = SumTuples(self.v2, t)
-
-    def moveV3(self, t):
-        self.v3 = SumTuples(self.v3, t)
-
-    def AspectRatio(self):
-        a = Norm2((self.v1[0] - self.v2[0], self.v1[1] - self.v2[1], self.v1[2] - self.v2[2]))
-        b = Norm2((self.v2[0] - self.v3[0], self.v2[1] - self.v3[1], self.v2[2] - self.v3[2]))
-        c = Norm2((self.v3[0] - self.v1[0], self.v3[1] - self.v1[1], self.v3[2] - self.v1[2]))
-        s = (a + b + c) / 2
-        return a*b*c / (8*(s-a)*(s-b)*(s-c))
+def DrawTriangle(t:Triangle, color):
+    glBegin(GL_LINES)
+    glColor3fv(color)
+    glVertex3fv(t.v1)
+    glVertex3fv(t.v2)
+    glVertex3fv(t.v2)
+    glVertex3fv(t.v3)
+    glVertex3fv(t.v3)
+    glVertex3fv(t.v1)
+    glEnd()
 
 def Usage():
     print("""
@@ -132,7 +58,7 @@ def main():
                  v3 = (0, 1, 0))
 
     try:
-        new_aspect_ratio = T.AspectRatio()
+        new_aspect_ratio = T.aspect_ratio()
     except:
         new_aspect_ratio = -1
     prev_aspect_ratio = new_aspect_ratio
@@ -189,19 +115,19 @@ def main():
 
         """ Update shapes """
         if ctrl_v == 1:
-            T.moveV1((t['x'], t['y'], t['z']))
+            T.move_v1((t['x'], t['y'], t['z']))
             cur_p = T.v1
         elif ctrl_v == 2:
-            T.moveV2((t['x'], t['y'], t['z']))
+            T.move_v2((t['x'], t['y'], t['z']))
             cur_p = T.v2
         elif ctrl_v == 3:
-            T.moveV3((t['x'], t['y'], t['z']))
+            T.move_v3((t['x'], t['y'], t['z']))
             cur_p = T.v3
             
-        T.rotate(angle)
+        T.rotate(angle=angle, axis='x', fixed=2)
         
         try:
-            new_aspect_ratio = T.AspectRatio()
+            new_aspect_ratio = T.aspect_ratio()
         except:
             new_aspect_ratio = -1
         
@@ -214,9 +140,9 @@ def main():
         DrawPoint(cur_p, RED, 5)
 
         if valid_t:
-            T.draw(WHITE)
+            DrawTriangle(T, WHITE)
         else:
-            T.draw(RED)
+            DrawTriangle(T, RED)
         
         """ Update screen """
         pygame.display.flip()
